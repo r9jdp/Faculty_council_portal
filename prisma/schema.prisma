@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model activities {
+  activity_id               Int                         @id
+  council_id                Int?
+  tenure_id                 Int?
+  date_of_activity          DateTime?                   @db.Date
+  name_of_activity          String?                     @db.VarChar
+  activity_type             String?                     @db.VarChar
+  name_of_the_organizer     String?                     @db.VarChar
+  start_date_of_activity    DateTime?                   @db.Date
+  end_date_of_activity      DateTime?                   @db.Date
+  target_audience           target_audience?
+  no_of_hours               Int?
+  no_of_participants        Int?
+  description               String?                     @db.VarChar(200)
+  pamplets                  Bytes?
+  activity_photos           Bytes?
+  councils                  councils?                   @relation(fields: [council_id], references: [council_id], onDelete: NoAction, onUpdate: NoAction)
+  tenure                    tenure?                     @relation(fields: [tenure_id], references: [tenure_id], onDelete: NoAction, onUpdate: NoAction)
+  activity_faculty_approval activity_faculty_approval[]
+}
+
+model activity_faculty_approval {
+  activity_approval_id Int              @id
+  activity_id          Int?
+  approval_status      approval_status?
+  activities           activities?      @relation(fields: [activity_id], references: [activity_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model certificate_faculty_approval {
+  certificate_approval_id Int              @id
+  certificate_id          Int?
+  approval_status         approval_status?
+  certificates            certificates?    @relation(fields: [certificate_id], references: [certificate_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model certificates {
+  certificate_id               Int                            @id
+  member_id                    Int?
+  tenure_id                    Int?
+  name_of_certificate          String?                        @db.VarChar
+  date_of_issue                DateTime?                      @db.Date
+  start_date_of_certificate    DateTime?                      @db.Date
+  end_date_of_certificate      DateTime?                      @db.Date
+  issue_by                     String?                        @db.VarChar
+  certificate_type             certificate_type?
+  level                        certificate_level?
+  certificate_description      String?                        @db.VarChar(200)
+  certificate_image            Bytes?
+  certificate_photos           Bytes?
+  certificate_faculty_approval certificate_faculty_approval[]
+  members                      members?                       @relation(fields: [member_id], references: [member_id], onDelete: NoAction, onUpdate: NoAction)
+  tenure                       tenure?                        @relation(fields: [tenure_id], references: [tenure_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model councils {
+  council_id       Int                @id
+  council_name     String?            @db.VarChar
+  council_email     String?           @db.VarChar
+  activities       activities[]
+  faculty_incharge faculty_incharge[]
+  members          members[]
+}
+
+model faculty_incharge {
+  facuty_name String?   @db.VarChar
+  faculty_email     String?           @db.VarChar
+  council_id  Int?
+  faculty_id  Int       @id
+  councils    councils? @relation(fields: [council_id], references: [council_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model member_faculty_approval {
+  member_approval_id Int              @id
+  member_id          Int?
+  approval_status    approval_status?
+  members            members?         @relation(fields: [member_id], references: [member_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model members {
+  council_id              Int?
+  tenure_id               Int?
+  member_id               Int                       @id
+  first_name              String?                   @db.VarChar
+  last_name               String?                   @db.VarChar
+  designation             String?                   @db.VarChar
+  branch                  String?                   @db.VarChar
+  academic_year           academic_year?
+  roll_number             Int?
+  email                   String?                   @db.VarChar
+  contact                 Int?
+  certificates            certificates[]
+  member_faculty_approval member_faculty_approval[]
+  councils                councils?                 @relation(fields: [council_id], references: [council_id], onDelete: NoAction, onUpdate: NoAction)
+  tenure                  tenure?                   @relation(fields: [tenure_id], references: [tenure_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tenure {
+  tenure_id    Int            @id
+  tenure       String?        @db.VarChar
+  activities   activities[]
+  certificates certificates[]
+  members      members[]
+}
+
+enum academic_year {
+  First
+  Second
+  Third
+  Fourth
+}
+
+enum approval_status {
+  Approved
+  Pending
+  Rejected
+}
+
+enum certificate_level {
+  Inter_College @map("Inter College")
+  Intra_College @map("Intra College")
+  Regional
+  National
+  International
+}
+
+enum certificate_type {
+  Individual
+  Team
+}
+
+enum target_audience {
+  UG_Students @map("UG Students")
+  PG_Students @map("PG Students")
+}

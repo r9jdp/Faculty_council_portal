@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Council Summary</title>
+    <style>
+        body {
+            font-family: Marcellus, serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            margin: 0 auto;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .header img {
+            width: 100px;
+            vertical-align: middle;
+        }
+
+        .header h2 {
+            display: inline;
+            margin-left: 20px;
+            vertical-align: middle;
+        }
+
+        .header h3 {
+            padding-top: 100px;
+            display: inline;
+            margin-left: 20px;
+            vertical-align: middle;
+            text-decoration: underline;
+            font-size: 28px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            margin-bottom: 10px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #C54D58 ;
+            color: #FFFFFF
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="header">
+                <h3><%= council.council_name%></h3>
+            </div>
+            <div class="section">
+                <h3>Faculty In-Charges:</h3>
+                <ul>
+                    <% faculty.forEach(facultyMember => { %>
+                        <li><%= facultyMember.facuty_name %></li>
+                    <% }) %>
+                    </ul>
+            </div>
+            <div class="section">
+                <h3>Members:</h3>
+                <table class="table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Designation</th>
+                        <th>Year</th>
+                        <th>Branch</th>
+                    </tr>
+                    <% members.forEach(member => { %>
+                        <tr>
+                            <td><%= member.first_name %> <%= member.last_name %></td>
+                            <td><%= member.designation %></td>
+                            <td><%= member.academic_year %></td>
+                            <td><%= member.branch %></td>
+                        </tr>
+                    <% }) %>
+                </table>
+            </div>
+            <div class="section">
+                <h3>Achievements:</h3>
+                <table class="table">
+                    <tr>
+                        <th>Date</th>
+                        <th>Name of Certificate</th>
+                        <th>Team/Individual</th>
+                        <th>Level</th>
+                        <th>Description</th>
+                    </tr>
+                    <% certificates.forEach(cert => { %>
+                        <tr>
+                            <td><%= new Date(cert.date_of_issue).toLocaleDateString() %></td>
+                            <td><%= cert.name_of_certificate %></td>
+                            <td><%= cert.certificate_type %></td>
+                            <td><%= cert.level %></td>
+                            <td><%= cert.certificate_description %></td>
+                        </tr>
+                    <% }) %>
+                </table>
+            </div>
+
+            <div class="section">
+                <h3>Activities:</h3>
+                <table class="table">
+                    <tr>
+                        <th>Date</th>
+                        <th>Name of Activity</th>
+                        <th>Type</th>
+                        <th>Venue</th>
+                        <th>No of hours</th>
+                        <th>No of audiences</th>
+                    </tr>
+                    <% activities.forEach(activity => { %>
+                        <tr>
+                            <td><%= new Date(activity.date_of_activity).toLocaleDateString() %></td>
+                            <td><%= activity.name_of_activity %></td>
+                            <td><%= activity.activity_type %></td>
+                            <td><%= activity.name_of_the_organizer %></td>
+                            <td><%= activity.no_of_hours %></td>
+                            <td><%= activity.no_of_participants %></td>
+                        </tr>
+                    <% }) %>
+                </table>
+            </div>
+
+            <div class="section">
+                <h3>Level-wise Summary:</h3>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Team</th>
+            <th>Individual</th>
+        </tr>
+        <% 
+            // Initialize counts
+            const levels = ['College', 'District', 'State', 'National', 'International'];
+            const counts = {
+                'College': { team: '-', individual: '-' },
+                'District': { team: '-', individual: '-' },
+                'State': { team: '-', individual: '-' },
+                'National': { team: '-', individual: '-' },
+                'International': { team: '-', individual: '-' }
+            };
+
+            // Count certificates by level
+            certificates.forEach(certificate => {
+                const level = certificate.level;
+                if (counts[level]) {
+                    if (certificate.certificate_type === 'Team') {
+                        counts[level].team = (counts[level].team === '-' ? 0 : counts[level].team) + 1;
+                    } else if (certificate.certificate_type === 'Individual') {
+                        counts[level].individual = (counts[level].individual === '-' ? 0 : counts[level].individual) + 1;
+                    }
+                }
+            });
+        %>
+        <tr>
+            <td>College</td>
+            <td><%= counts.College.team %></td>
+            <td><%= counts.College.individual %></td>
+        </tr>
+        <tr>
+            <td>District</td>
+            <td><%= counts.District.team %></td>
+            <td><%= counts.District.individual %></td>
+        </tr>
+        <tr>
+            <td>State</td>
+            <td><%= counts.State.team %></td>
+            <td><%= counts.State.individual %></td>
+        </tr>
+        <tr>
+            <td>National</td>
+            <td><%= counts.National.team %></td>
+            <td><%= counts.National.individual %></td>
+        </tr>
+        <tr>
+            <td>International</td>
+            <td><%= counts.International.team %></td>
+            <td><%= counts.International.individual %></td>
+        </tr>
+    </table>
+            </div>
+
+            <div class="section">
+                <h3>Activities Summary:</h3>
+                <table class="table">
+                    <tr>
+                        <th></th>
+                        <th>0-1 days</th>
+                        <th>2-3 days</th>
+                        <th>>3 days</th>
+                    </tr>
+                    <!-- Assuming you need to populate this dynamically too -->
+                    <tr>
+                        <td>Event</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Activity</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Workshop</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Seminar</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Webinar</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Guest Lecture</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
