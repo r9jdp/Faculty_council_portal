@@ -1,14 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function isInTheCouncilTable(email) {
+
+async function FacultyDataFromEmail(email) {
     try {
-        const council = await prisma.councils.findFirst({
+        const facultyData = await prisma.faculty_incharge.findFirst({
             where: {
-                council_email: email
+                faculti_email: email
             }
         });
-        return council !== null; 
+        return facultyData; 
     } catch (error) {
         console.error('Error querying the database:', error);
         return false; 
@@ -17,23 +18,23 @@ async function isInTheCouncilTable(email) {
     }
 }
 
-async function isInTheFacultyTable(email) {
+async function councilDetaills(id) {
     try {
-        const faculty = await prisma.faculty_incharge.findFirst({
-            where: {
-                faculti_email: email
+        const data = await prisma.councils.findFirst({
+            where:{
+                council_id : id,
             }
         });
-        return faculty !== null; 
+        return data; 
     } catch (error) {
         console.error('Error querying the database:', error);
         return false; 
     } finally {
         await prisma.$disconnect();
-    }    
+    }
 }
 
 module.exports = {
-    isInTheCouncilTable,
-    isInTheFacultyTable
+    FacultyDataFromEmail,
+    councilDetaills
 };

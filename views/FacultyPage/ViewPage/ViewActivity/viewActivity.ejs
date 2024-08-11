@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Activity</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .navbar {
+      height: 80px;
+      box-shadow: 1px 1px 5px 1px #888888;
+      background-color: white;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .logoutBtn {
+      background-color: white;
+      color: black;
+      border: 5px solid #f44336;
+      border-radius: 15px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 1px 1px 5px 1px #888888;
+      margin-right: 50px;
+    }
+
+    .somaiya-logo-main {
+      margin-left: 50px;
+      height: 80%;
+    }
+
+    .navbar a {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .txt {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      /* background-color: #36d4f4; */
+      height: 8vh;
+      margin-top: 1%;
+    }
+
+    .search-container {
+      height: 4vh;
+      width: 15%;
+      margin-right: 15%;
+      float: right;
+      margin-bottom: 0.3%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-container input[type="search"] {
+      width: 60%;
+      height: 90%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+    }
+
+    .search-container button[type="button"] {
+      height: 70%;
+      width: 30%;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* .table-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+    #side-nav {
+      position: fixed;
+      width: 1.5%;
+      margin-top: 1%;
+      left: 0;
+      padding: 15px;
+      background-color: transparent;
+      color: black;
+      cursor: pointer;
+      font-size: 2rem;
+      z-index: 100;
+    }
+
+    #sidebar {
+      z-index: 100;
+      height: 100%;
+      width: 0;
+      position: fixed;
+      margin-top: 1%;
+      left: 0;
+      background-color: #d5c0bb;
+      overflow-x: hidden;
+      color: black;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
+
+    #sidebar button {
+      padding: 10px 15px;
+      text-align: left;
+      border: none;
+      background: none;
+      color: black;
+      font-size: 18px;
+      display: block;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    #sidebar button:hover {
+      background-color: #575757;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #overlayContent {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      max-width: 600px;
+      background-color: white;
+      border: 2px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .popup-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .popup-content div {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .popup-content span {
+      flex-basis: 50%;
+      text-align: left;
+      padding: 1%;
+    }
+
+    .popup-content input {
+      flex-basis: 50%;
+      text-align: right;
+      border: none;
+      background-color: #f2f2f2;
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    .popup-content textarea {
+      width: 100%;
+      height: 80px;
+      border: none;
+      background-color: #f2f2f2;
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    .popup-content button {
+      margin-top: 20px;
+      background-color: #f2dede;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: center;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main">
+
+    <header>
+      <div class="navbar">
+        <a href="/"><img class="somaiya-logo-main" src="/logo_somaiya.png" alt="somaiya-logo"></a>
+        <button type="button"
+          class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-bold rounded-lg text-xl px-8 py-2.5 me-5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+          <a href="/logout">Logout</a>
+      </div>
+    </header>
+    </header>
+
+    <div id="sidebar">
+      <a
+        href="/faculty/viewCertificates?tenure_id=<%= tenure_id%>&council_id=<%= council_id%>&faculty_id=<%= faculty_id%>"><button
+          class="nav-btn">View
+          Certificate</button></a>
+      <a href="/faculty/viewMember?tenure_id=<%= tenure_id%>&council_id=<%= council_id%>&faculty_id=<%= faculty_id%>"><button
+          class="nav-btn">View Member</button></a>
+      <a href="/faculty/viewActivity?tenure_id=<%= tenure_id%>&council_id=<%= council_id%>&faculty_id=<%= faculty_id%>"><button
+          class="nav-btn">View Activity</button></a>
+      <a href="/faculty/viewPending?tenure_id=<%= tenure_id%>&council_id=<%= council_id%>&faculty_id=<%= faculty_id%>"><button
+          class="nav-btn">View Pending
+          Approvals</button></a>
+      <a href="/faculty/ViewSummary?tenure_id=<%= tenure_id%>&council_id=<%= council_id%>&faculty_id=<%= faculty_id%>"><button
+          class="nav-btn">Summary</button></a>
+    </div>
+
+    <div id="side-nav">
+      <span onclick="toggleNav()">&#9776;</span>
+    </div>
+
+    <div class="content">
+      <div class="txt">
+        <h1 class="font-bold text-3xl">View Activity</h1>
+      </div>
+      <div class="table-container m-10">
+        <div class="flex flex-col">
+          <div class="-m-1.5 overflow-x-auto">
+            <div class="p-1.5 min-w-full inline-block align-middle">
+              <div class="border rounded-lg divide-y divide-gray-200">
+                <div class="py-3 px-4">
+                  <div class="relative max-w-xs">
+                    <label for="hs-table-search" class="sr-only">Search</label>
+                    <input type="text" name="hs-table-search" id="hs-table-search search-container"
+                      class="py-2 px-3 ps-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                      placeholder="Search for items" />
+                    <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3">
+                      <svg class="size-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div class="overflow-hidden">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th scope="col" class="py-3 px-4 pe-0"></th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                          Activity Name
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                          Date of Activity
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                      <% data.forEach(item=> { %>
+                        <tr>
+                          <td class="py-3 ps-4"></td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                            <%= item.name_of_activity%>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            <%= new Date(item.date_of_activity).toLocaleDateString('en-US')%>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                            <button 
+                              type="button"
+                              class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none viewButton"
+                              data-id="<%= item.activity_id %>"
+                              data-type="<%= item.activity_type %>"
+                              data-name="<%= item.name_of_activity %>"
+                              data-organizers="<%= item.name_of_the_organizer %>"
+                              data-start-date="<%= new Date(item.start_date_of_activity).toISOString().split('T')[0] %>"
+                              data-end-date="<%= new Date(item.end_date_of_activity).toISOString().split('T')[0] %>"
+                              data-audience="<%= item.target_audience %>"
+                              data-hours="<%= item.no_of_hours %>"
+                              data-participants="<%= item.no_of_participants %>"
+                              data-description="<%= item.description %>"
+                            >
+                              View
+                            </button>
+                          </td>
+                          
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="overlay">
+        <div id="overlayContent">
+          <div class="popup-content">
+            <div>
+              <span>Activity type:</span>
+              <input id="activityType" readonly />
+            </div>
+
+            <div>
+              <span>Activity Name:</span>
+              <input id="ActivityName" readonly />
+            </div>
+            <div>
+              <span>Name of Organizing Students/Councils </span>
+              <input id="Organizers" readonly />
+            </div>
+            <div>
+              <span>Start Date</span>
+              <input id="startDate" readonly />
+              <span>End Date</span>
+              <input id="endDate" readonly />
+            </div>
+
+            <div>
+              <span>Target Audience: </span>
+              <input id="Audience" readonly />
+            </div>
+
+            <div>
+              <span>No of Hours</span>
+              <input id="Hours" readonly />
+            </div>
+
+            <div>
+              <span>No of Participants</span>
+              <input id="Participants" readonly />
+            </div>
+
+            <div>
+              <span>Description</span>
+              <textarea id="description" readonly></textarea>
+            </div>
+            <div>
+              <button id="viewCertificate">Pamphlets</button>
+              <button id="viewPhotos">Photos</button>
+            </div>
+            <button id="closeButton">✖ Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let sidebarOpen = false;
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const viewButtons = document.querySelectorAll(".viewButton");
+    const overlay = document.getElementById("overlay");
+    const closeButton = document.getElementById("closeButton");
+
+    viewButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        // Extract data attributes
+        const activityType = button.getAttribute("data-type");
+        const activityName = button.getAttribute("data-name");
+        const organizers = button.getAttribute("data-organizers");
+        const startDate = button.getAttribute("data-start-date");
+        const endDate = button.getAttribute("data-end-date");
+        const audience = button.getAttribute("data-audience");
+        const hours = button.getAttribute("data-hours");
+        const participants = button.getAttribute("data-participants");
+        const description = button.getAttribute("data-description");
+
+        // Populate overlay content
+        document.getElementById("activityType").value = activityType;
+        document.getElementById("ActivityName").value = activityName;
+        document.getElementById("Organizers").value = organizers;
+        document.getElementById("startDate").value = startDate;
+        document.getElementById("endDate").value = endDate;
+        document.getElementById("Audience").value = audience;
+        document.getElementById("Hours").value = hours;
+        document.getElementById("Participants").value = participants;
+        document.getElementById("description").value = description;
+
+        // Show overlay
+        overlay.style.display = "flex";
+      });
+    });
+
+    closeButton.addEventListener("click", function () {
+      overlay.style.display = "none";
+    });
+
+    overlay.addEventListener("click", function (event) {
+      if (event.target === overlay) {
+        overlay.style.display = "none";
+      }
+    });
+  });
+
+
+
+    function toggleNav() {
+      if (sidebarOpen) {
+        document.getElementById("sidebar").style.width = "0";
+        sidebarOpen = false;
+      } else {
+        document.getElementById("sidebar").style.width = "250px";
+        sidebarOpen = true;
+      }
+    }
+  </script>
+</body>
+
+</html>

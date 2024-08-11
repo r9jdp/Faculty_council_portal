@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { auth, requiresAuth } = require("express-openid-connect");
-const isInTheCouncilTable = require("../Functions/isInTheDatabase");
+const {isInTheCouncilTable, isInTheFacultyTable} = require("../Functions/isInTheDatabase");
 const {
   FindCouncilDataFromEmail,
   FindYears,
@@ -9,52 +9,75 @@ const {
   findCouncilDataFromId,
   getCertificates,
 } = require("../Functions/findDataFromId");
+const { FacultyDataFromEmail } = require("../Functions/FacultyData");
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   if (req.oidc.isAuthenticated()) {
+    const email = req.oidc.user.email;
+
     async function check_for_council() {
-      email = req.oidc.user.email;
       try {
         const exists = await isInTheCouncilTable(email);
-        console.log(`Email exists: ${exists}`);
         return exists;
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error checking council:", error);
+        return false;
       }
     }
 
-    if (check_for_council()) {
-      // if (req.oidc.user.email == "rajdeepvp273@gmail.com") {
-      //   async function checkEmail() {
-      //     email = req.oidc.user.email;
-      //     try {
-      //       const exists = await isInTheDatabase(email);
-      //       console.log(`Email exists: ${exists}`);
-      //     } catch (error) {
-      //       console.error("Error:", error);
-      //     }
-      //   }
-      //   checkEmail();
-
-      async function councilData() {
-        const data = await FindCouncilDataFromEmail(req.oidc.user.email);
-        res.redirect(
-          `/council?name=${data.council_name}&council_id=${data.council_id}`
-        );
+    async function checkfaculty() {
+      try {
+        const exists = await isInTheFacultyTable(email);
+        console.log(`Email exists in faculty: ${exists}`);
+        return exists;
+      } catch (error) {
+        console.error("Error checking faculty:", error);
+        return false;
       }
-      councilData();
-    } else {
-      res.redirect("/logout");
+    }
+
+    try {
+      const isFaculty = await checkfaculty();
+      if (isFaculty) {
+        console.log("Yes faculty worked");
+        async function facultyData() {
+          const data = await FacultyDataFromEmail(email);
+          console.log(data);
+          return data;
+        }
+        const {faculty_id , council_id} = await facultyData();
+        return res.redirect(`/faculty?faculty_id=${faculty_id}&council_id=${council_id}`);
+      }
+
+      const isCouncil = await check_for_council();
+      if (isCouncil) {
+        async function councilData() {
+          try {
+            const data = await FindCouncilDataFromEmail(email);
+            return res.redirect(`/council?name=${data.council_name}&council_id=${data.council_id}`);
+          } catch (error) {
+            console.error("Error fetching council data:", error);
+            return res.redirect("/error"); // Handle error case
+          }
+        }
+        return councilData();
+      }
+
+      return res.redirect("/logout");
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      return res.redirect("/error"); // Handle unexpected errors
     }
   } else {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 });
+
+
 
 router.get("/council", requiresAuth(), (req, res) => {
   async function council_page_data() {
     years = await FindYears();
-    console.log(years);
     res.render("council_login\\Welcome", {
       name: req.query.name,
       academic_year: years,

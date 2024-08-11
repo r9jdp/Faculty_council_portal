@@ -5,7 +5,7 @@ const { auth, requiresAuth } = require("express-openid-connect");
 const bodyParser = require("body-parser");
 const PORT = 4444 || process.env.PORT;
 const mainRouter = require("./routes/main");
-
+const facultyRouter = require("./routes/faculty")
 
 const config = {
   authRequired: false,
@@ -21,6 +21,7 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(mainRouter);
+app.use(facultyRouter);
 
 
 app.listen(PORT, () => console.log(`Running on http://localhost:${PORT}`));

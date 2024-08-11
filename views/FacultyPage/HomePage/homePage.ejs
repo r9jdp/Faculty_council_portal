@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOMAIYA Vidyavihar University</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      margin: 0;
+      background-color: white;
+    }
+
+    .navbar {
+      height: 80px;
+      box-shadow: 1px 1px 5px 1px #888888;
+      background-color: white;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .logoutBtn {
+      background-color: white;
+      color: black;
+      border: 5px solid #f44336;
+      border-radius: 15px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 1px 1px 5px 1px #888888;
+      margin-right: 50px;
+    }
+
+    .navbar a {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .somaiya-logo-main {
+      margin-left: 50px;
+      height: 80%;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .intro {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 3%;
+    }
+
+    .intro h2 {
+      font-size: 2.5rem;
+    }
+
+    .intro img {
+      height: 20vh;
+      object-fit: contain;
+    }
+
+    .container {
+      width: 30%;
+      height: fit-content;
+      margin: 0;
+      padding: 20px;
+      background-color: #fae6b8;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .container select,
+    .container button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: right;
+      gap: 5%;
+      height: 5vh;
+    }
+
+    .button-container button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      flex: 1;
+      margin-right: 10px;
+      border-radius: 5px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .button-container button:disabled {
+      background-color: #b0b0b0;
+      cursor: not-allowed;
+    }
+
+    .button-container button:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+
+    a {
+      text-decoration: none;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+  <div class="main">
+    <header>
+      <div class="navbar">
+        <a href="../HomePage/homePage.html"><img class="somaiya-logo-main" src="logo_somaiya.png"
+            alt="somaiya-logo" /></a>
+        <button type="button"
+          class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-bold rounded-lg text-xl px-8 py-2.5 me-5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+          <a href="/logout">Logout</a>
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="intro">
+        <img src="faculty_icon.png" alt="Faculty Icon" />
+        <h2>Welcome, Faculty</h2>
+      </div>
+
+      <div class="container">
+        <h1>Select Academic Year & Council</h1>
+        <label for="academic-year">Select Academic Year:</label>
+        <select id="academic-year" onchange="toggleButtons()">
+          <option value="" disabled selected>Select Year</option>
+          <% academic_year.forEach(item => { %>
+            <option value="<%= item.tenure_id %>">
+              <%= item.tenure %>
+            </option>
+          <% }); %>
+        </select>
+
+        <label for="council">Select Council:</label>
+        <select id="council" onchange="toggleButtons()">
+          <option value="" disabled selected>Select Council</option>
+          <option value="Student Council">
+            <%= councils.council_name %>
+          </option>
+        </select>
+
+        <div class="button-container">
+          <a id="view-link" href="#">
+            <button id="view-button" disabled>View</button>
+          </a>
+          <a id="edit-link" href="#">
+            <button id="edit-button" disabled>Edit</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function toggleButtons() {
+      const year = document.getElementById("academic-year").value;
+      const council = document.getElementById("council").value;
+      const viewButton = document.getElementById("view-button");
+      const editButton = document.getElementById("edit-button");
+      const viewLink = document.getElementById("view-link");
+      const editLink = document.getElementById("edit-link");
+
+      if (year && council) {
+        viewButton.disabled = false;
+        editButton.disabled = false;
+        viewLink.href = `/faculty/viewCertificates?tenure_id=${encodeURIComponent(year)}&council_id=<%= council_id%>&faculty_id=<%= faculty_id%>`;
+        editLink.href = `../EditPage/approveCertificate.html?year=${encodeURIComponent(year)}&council=${encodeURIComponent(council)}`;
+      } else {
+        viewButton.disabled = true;
+        editButton.disabled = true;
+        viewLink.href = '#';  // Set to # or another placeholder if needed
+        editLink.href = '#';  // Set to # or another placeholder if needed
+      }
+    }
+  </script>
+</body>
+
+</html>
